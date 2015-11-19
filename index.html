@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="http://lyceum9.com/assets/components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen">
+<link href="https://yastatic.net/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/foundation.css" />
+
+</head>
+<body class="container">
+<p class="lead">Добро пожаловать в чат!</p>
+
+<form id="publish" class="form-inline">
+  <input type="text" name="message"/>
+  <input type="submit" class="btn btn-fiolet" value="Отправить"/>
+</form>
+
+<ul id="messages"></ul>
+
+
+<script>
+
+
+  publish.onsubmit = function() {
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("POST", "/publish", true);
+
+    xhr.send(JSON.stringify({message: this.elements.message.value}));
+
+    this.elements.message.value = '';
+
+    return false;
+  };
+
+  subscribe();
+
+  function subscribe() {
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("GET", "/subscribe", true);
+
+    xhr.onreadystatechange = function() {
+      if (this.readyState != 4) return;
+
+      if (this.status != 200) {
+        setTimeout(subscribe, 500);
+        return;
+      }
+
+      var li = document.createElement('li');
+      li.appendChild(document.createTextNode(this.responseText));
+      messages.appendChild(li);
+
+      subscribe();
+    };
+
+    xhr.send(null);
+  }
+
+
+</script>
+</body>
+</html>
